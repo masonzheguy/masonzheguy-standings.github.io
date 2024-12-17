@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Grapes Swim Team</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-gray-100 to-gray-200">
+
+  <div class="flex">
+    <!-- Left Section -->
+    <div class="w-3/4 p-8 overflow-y-auto">
+      <h1 class="text-4xl font-bold text-center mb-10 text-gray-800">
+        🏊 The Grapes 🍇
+      </h1>
+
+      <!-- Swimmer Cards -->
+      <div id="swimmerCards" class="space-y-6"></div>
+
+      <!-- Team Motto -->
+      <div class="text-center mt-10 bg-white/50 rounded-lg p-6 max-w-2xl mx-auto">
+        <h2 class="text-2xl font-bold mb-4 text-gray-800">The Grapes Swim Team Motto</h2>
+        <p class="italic text-gray-700">"long leg short leg"</p>
+      </div>
+    </div>
+
+    <!-- Right Section -->
+    <div class="w-1/4 bg-white/80 p-6 border-l">
+      <div id="detailsSection" class="text-center text-gray-500">
+        Select a swimmer to view details
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const swimmers = [
+      { 
+        name: 'Elijah', 
+        bio: 'Freestyle Specialist', 
+        rank: 1, 
+        speciality: 'Freestyle',
+        achievements: ['Pro 500 swimmer', 'Thats about it'],
+        details: { age: 17, weight: '150 lbs', height: "5'10\"", bestTime: 'Not entered yet' }
+      },
+      { 
+        name: 'Mason', 
+        bio: 'Butterfly Maestro', 
+        rank: 2,
+        speciality: 'Butterfly',
+        achievements: ['Fly man', 'Like Leo but better', 'Like Ben but taller'],
+        details: { age: 16, weight: '145 lbs', height: "5'9\"", bestTime: 'Not entered yet' }
+      },
+      { 
+        name: 'Ben', 
+        bio: 'IM Competitor', 
+        rank: 3,
+        speciality: 'IM',
+        achievements: ['Short', 'Like Will but doesn\'t skip'],
+        details: { age: 16, weight: '140 lbs', height: "5'6\"", bestTime: 'Not entered yet' }
+      },
+      { 
+        name: 'Leo', 
+        bio: 'Backstroke Warrior', 
+        rank: 4,
+        speciality: 'Backstroke',
+        achievements: ['Rehabilitation', 'Crippled'],
+        details: { age: 17, weight: '155 lbs', height: "5\'11\"", bestTime: 'Not entered yet' }
+      },
+      { 
+        name: 'Will', 
+        bio: 'Practice Skipper', 
+        rank: 5,
+        speciality: 'Breaststroke',
+        achievements: ['Skips practice'],
+        details: { age: 16, weight: '148 lbs', height: "5'8\"", bestTime: 'Not entered yet' }
+      }
+    ];
+
+    const gradients = [
+      'from-purple-500 to-pink-500',
+      'from-blue-500 to-indigo-600',
+      'from-green-400 to-emerald-600',
+      'from-yellow-400 to-orange-500',
+      'from-red-500 to-rose-600'
+    ];
+
+    const cardsContainer = document.getElementById('swimmerCards');
+    const detailsSection = document.getElementById('detailsSection');
+
+    let expandedCard = null;
+
+    function renderSwimmerCards() {
+      swimmers.forEach((swimmer, index) => {
+        // Create Card
+        const card = document.createElement('div');
+        card.className = `w-full max-w-md mx-auto bg-gradient-to-br ${gradients[index]} text-white shadow-xl transform transition duration-300 hover:scale-105 cursor-pointer rounded-lg`;
+
+        card.innerHTML = `
+          <div class="p-6">
+            <div class="flex justify-between items-center">
+              <div class="flex items-center space-x-3">
+                <h2 class="text-2xl font-bold">${swimmer.name}</h2>
+                <span class="bg-white/30 px-2 py-1 rounded-full text-sm">🏊 ${swimmer.speciality}</span>
+              </div>
+              <div class="bg-white/30 px-3 py-1 rounded-full text-lg font-semibold">🏆 Rank ${swimmer.rank}</div>
+            </div>
+            <p class="text-white/90 italic my-4">"${swimmer.bio}"</p>
+            <div class="hidden mt-4 bg-white/20 rounded-lg p-4" id="achievements-${index}">
+              <h3 class="font-bold mb-2 flex items-center">🚩 Achievements</h3>
+              <ul class="space-y-1">
+                ${swimmer.achievements.map(a => `<li>🏊‍♂️ ${a}</li>`).join('')}
+              </ul>
+            </div>
+          </div>
+        `;
+
+        // Handle Card Click
+        card.addEventListener('click', () => {
+          toggleAchievements(index, swimmer);
+        });
+
+        cardsContainer.appendChild(card);
+      });
+    }
+
+    function toggleAchievements(index, swimmer) {
+      const achievements = document.getElementById(`achievements-${index}`);
+
+      // Collapse previously expanded card
+      if (expandedCard && expandedCard !== achievements) {
+        expandedCard.classList.add('hidden');
+      }
+
+      // Toggle current card
+      achievements.classList.toggle('hidden');
+      expandedCard = achievements.classList.contains('hidden') ? null : achievements;
+
+      // Update details in sidebar
+      detailsSection.innerHTML = `
+        <h2 class="text-2xl font-bold mb-4">${swimmer.name} Details</h2>
+        <p>🔢 Rank: ${swimmer.rank}</p>
+        <p>🏊 Speciality: ${swimmer.speciality}</p>
+        <p>📏 Height: ${swimmer.details.height}</p>
+        <p>⚖️ Weight: ${swimmer.details.weight}</p>
+        <p>🕰️ Best Time: ${swimmer.details.bestTime}</p>
+        <div class="mt-6">
+          <h3 class="text-xl font-bold mb-3">🚩 Achievements</h3>
+          <ul class="space-y-2">
+            ${swimmer.achievements.map(a => `<li>🏊‍♂️ ${a}</li>`).join('')}
+          </ul>
+        </div>
+      `;
+    }
+
+    // Render the cards on load
+    renderSwimmerCards();
+  </script>
+</body>
+</html>
